@@ -40,8 +40,15 @@ npm run start:prod
 ## API Documentation
 
 Once the application is running, you can access the Swagger documentation at:
+
+### Local Development
 ```
 http://localhost:3000/api-docs
+```
+
+### Production
+```
+https://dynamic-api-engine.onrender.com/api-docs
 ```
 
 ## Usage
@@ -50,8 +57,16 @@ http://localhost:3000/api-docs
 
 Generate an API key to access the endpoints:
 
+#### Local Development
 ```bash
 curl -X POST http://localhost:3000/config/api-key \
+  -H "Content-Type: application/json" \
+  -d '{"name": "my-api-key"}'
+```
+
+#### Production
+```bash
+curl -X POST https://dynamic-api-engine.onrender.com/config/api-key \
   -H "Content-Type: application/json" \
   -d '{"name": "my-api-key"}'
 ```
@@ -62,8 +77,42 @@ Save the returned API key securely - you'll need it for all subsequent requests.
 
 Define a new API endpoint with custom validation:
 
+#### Local Development
 ```bash
 curl -X POST http://localhost:3000/config \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -d '{
+    "name": "email-validator",
+    "method": "POST",
+    "body": {
+      "email": "",
+      "name": ""
+    },
+    "customValidation": "function customValidation(data) {
+      const { email, name } = data.body;
+      
+      if (!email) {
+        return { isValid: false, message: 'Email is required' };
+      }
+      
+      if (!name) {
+        return { isValid: false, message: 'Name is required' };
+      }
+      
+      const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return { isValid: false, message: 'Invalid email format' };
+      }
+      
+      return { isValid: true, message: 'Validation passed' };
+    }"
+  }'
+```
+
+#### Production
+```bash
+curl -X POST https://dynamic-api-engine.onrender.com/config \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -98,8 +147,20 @@ curl -X POST http://localhost:3000/config \
 
 Call your custom API endpoint:
 
+#### Local Development
 ```bash
 curl -X POST http://localhost:3000/api/email-validator \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -d '{
+    "email": "test@example.com",
+    "name": "John Doe"
+  }'
+```
+
+#### Production
+```bash
+curl -X POST https://dynamic-api-engine.onrender.com/api/email-validator \
   -H "Content-Type: application/json" \
   -H "x-api-key: YOUR_API_KEY" \
   -d '{
@@ -131,7 +192,6 @@ curl -X POST http://localhost:3000/api/email-validator \
 
 ### Health & Monitoring
 - `GET /health` - Check system health
-- `GET /stats`
 
 ## Development
 

@@ -21,7 +21,7 @@ import { ConfigService } from './config.service';
 import { ApiConfigDto } from '../common/dto/api-config.dto';
 import { ApiConfig } from '../common/interfaces/api-config.interface';
 
-@ApiTags('API Configuration')
+@ApiTags('Configuration Management')
 @Controller('config')
 @ApiBearerAuth()
 @ApiSecurity('x-api-key')
